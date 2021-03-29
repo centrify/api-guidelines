@@ -1,156 +1,170 @@
-# Microsoft REST API Guidelines
+# Centrify REST API Guidelines
 
-## Microsoft REST API Guidelines Working Group
+## Centrify REST API Guidelines Working Group
 
 Name | Name | Name |
 ---------------------------- | -------------------------------------- | ----------------------------------------
-Dave Campbell (CTO C+E)      | Rick Rashid (CTO ASG)                  | John Shewchuk (Technical Fellow, TED HQ)
-Mark Russinovich (CTO Azure) | Steve Lucco (Technical Fellow, DevDiv) | Murali Krishnaprasad (Azure App Plat)
-Rob Howard (ASG)             | Peter Torr  (OSG)                      | Chris Mullins (ASG)
+Macy Abbey (Architect )      |                                        |
+
 
 <div style="font-size:150%">
-Document editors: John Gossman (C+E), Chris Mullins (ASG), Gareth Jones (ASG), Rob Dolin (C+E), Mark Stafford (C+E)<br/>
+Document editors: Macy Abbey
 </div>
 
-# Microsoft REST API Guidelines
+# Centrify REST API Guidelines
 
 ## 1. Abstract
-The Microsoft REST API Guidelines, as a design principle, encourages application developers to have resources accessible to them via a RESTful HTTP interface.
-To provide the smoothest possible experience for developers on platforms following the Microsoft REST API Guidelines, REST APIs SHOULD follow consistent design guidelines to make using them easy and intuitive.
+The Centrify REST API Guidelines, as a design principle, encourages application developers to have resources accessible to them via a RESTful HTTP interface.
+To provide the smoothest possible experience for developers on platforms following the Centrify REST API Guidelines, REST APIs SHOULD follow consistent design guidelines to make using them easy and intuitive.
 
-This document establishes the guidelines Microsoft REST APIs SHOULD follow so RESTful interfaces are developed consistently.
+This document establishes the guidelines Centrify REST APIs SHOULD follow so RESTful interfaces are developed consistently.
+
+Supporting documents are available in  /supporting in this document's repository.
+They are often a better starting point than trying to consume this document in its entirety.
+
+Note this work is based off of https://github.com/microsoft/api-guidelines by grant of its license https://github.com/microsoft/api-guidelines/commit/b998c0b0693fa76b40e1160cb422e00638ec927c
 
 ## 2. Table of contents
 <!-- TOC depthFrom:2 depthTo:4 orderedList:false updateOnSave:false withLinks:true -->
 
-- [Microsoft REST API Guidelines Working Group](#microsoft-rest-api-guidelines-working-group)
-- [1. Abstract](#1-abstract)
-- [2. Table of contents](#2-table-of-contents)
-- [3. Introduction](#3-introduction)
+- [Centrify REST API Guidelines](#centrify-rest-api-guidelines)
+  - [Centrify REST API Guidelines Working Group](#centrify-rest-api-guidelines-working-group)
+- [Centrify REST API Guidelines](#centrify-rest-api-guidelines-1)
+  - [1. Abstract](#1-abstract)
+  - [2. Table of contents](#2-table-of-contents)
+  - [3. Introduction](#3-introduction)
     - [3.1. Recommended reading](#31-recommended-reading)
-- [4. Interpreting the guidelines](#4-interpreting-the-guidelines)
+  - [4. Interpreting the guidelines](#4-interpreting-the-guidelines)
     - [4.1. Application of the guidelines](#41-application-of-the-guidelines)
     - [4.2. Guidelines for existing services and versioning of services](#42-guidelines-for-existing-services-and-versioning-of-services)
     - [4.3. Requirements language](#43-requirements-language)
     - [4.4. License](#44-license)
-- [5. Taxonomy](#5-taxonomy)
+  - [5. Taxonomy](#5-taxonomy)
     - [5.1. Errors](#51-errors)
     - [5.2. Faults](#52-faults)
     - [5.3. Latency](#53-latency)
     - [5.4. Time to complete](#54-time-to-complete)
     - [5.5. Long running API faults](#55-long-running-api-faults)
-- [6. Client guidance](#6-client-guidance)
+  - [6. Client guidance](#6-client-guidance)
     - [6.1. Ignore rule](#61-ignore-rule)
     - [6.2. Variable order rule](#62-variable-order-rule)
     - [6.3. Silent fail rule](#63-silent-fail-rule)
-- [7. Consistency fundamentals](#7-consistency-fundamentals)
+  - [7. Consistency fundamentals](#7-consistency-fundamentals)
     - [7.1. URL structure](#71-url-structure)
     - [7.2. URL length](#72-url-length)
     - [7.3. Canonical identifier](#73-canonical-identifier)
     - [7.4. Supported methods](#74-supported-methods)
-        - [7.4.1. POST](#741-post)
-        - [7.4.2. PATCH](#742-patch)
-        - [7.4.3. Creating resources via PATCH (UPSERT semantics)](#743-creating-resources-via-patch-upsert-semantics)
-        - [7.4.4. Options and link headers](#744-options-and-link-headers)
+      - [7.4.1. POST](#741-post)
+      - [7.4.2. PATCH](#742-patch)
+      - [7.4.3. Creating resources via PATCH (UPSERT semantics)](#743-creating-resources-via-patch-upsert-semantics)
+      - [7.4.4. Options and link headers](#744-options-and-link-headers)
     - [7.5. Standard request headers](#75-standard-request-headers)
     - [7.6. Standard response headers](#76-standard-response-headers)
     - [7.7. Custom headers](#77-custom-headers)
     - [7.8. Specifying headers as query parameters](#78-specifying-headers-as-query-parameters)
     - [7.9. PII parameters](#79-pii-parameters)
     - [7.10. Response formats](#710-response-formats)
-        - [7.10.1. Clients-specified response format](#7101-clients-specified-response-format)
-        - [7.10.2. Error condition responses](#7102-error-condition-responses)
+      - [7.10.1. Clients-specified response format](#7101-clients-specified-response-format)
+      - [7.10.2. Error condition responses](#7102-error-condition-responses)
     - [7.11. HTTP Status Codes](#711-http-status-codes)
+      - [7.11.1 HTTP Status Code Subset](#7111-http-status-code-subset)
     - [7.12. Client library optional](#712-client-library-optional)
-- [8. CORS](#8-cors)
+  - [8. CORS](#8-cors)
     - [8.1. Client guidance](#81-client-guidance)
-        - [8.1.1. Avoiding preflight](#811-avoiding-preflight)
+      - [8.1.1. Avoiding preflight](#811-avoiding-preflight)
     - [8.2. Service guidance](#82-service-guidance)
-- [9. Collections](#9-collections)
+  - [9. Collections](#9-collections)
     - [9.1. Item keys](#91-item-keys)
     - [9.2. Serialization](#92-serialization)
     - [9.3. Collection URL patterns](#93-collection-url-patterns)
-        - [9.3.1. Nested collections and properties](#931-nested-collections-and-properties)
+      - [9.3.1. Nested collections and properties](#931-nested-collections-and-properties)
     - [9.4. Big collections](#94-big-collections)
     - [9.5. Changing collections](#95-changing-collections)
     - [9.6. Sorting collections](#96-sorting-collections)
-        - [9.6.1. Interpreting a sorting expression](#961-interpreting-a-sorting-expression)
+      - [9.6.1. Interpreting a sorting expression](#961-interpreting-a-sorting-expression)
     - [9.7. Filtering](#97-filtering)
-        - [9.7.1. Filter operations](#971-filter-operations)
-        - [9.7.2. Operator examples](#972-operator-examples)
-        - [9.7.3. Operator precedence](#973-operator-precedence)
+      - [9.7.1. Filter operations](#971-filter-operations)
+      - [9.7.2. Operator examples](#972-operator-examples)
+      - [9.7.3. Operator precedence](#973-operator-precedence)
     - [9.8. Pagination](#98-pagination)
-        - [9.8.1. Server-driven paging](#981-server-driven-paging)
-        - [9.8.2. Client-driven paging](#982-client-driven-paging)
-        - [9.8.3. Additional considerations](#983-additional-considerations)
+      - [9.8.1. Server-driven paging](#981-server-driven-paging)
+      - [9.8.2. Client-driven paging](#982-client-driven-paging)
+      - [9.8.3. Additional considerations](#983-additional-considerations)
     - [9.9. Compound collection operations](#99-compound-collection-operations)
     - [9.10. Empty Results](#910-empty-results)
-- [10. Delta queries](#10-delta-queries)
+  - [10. Delta queries](#10-delta-queries)
     - [10.1. Delta links](#101-delta-links)
     - [10.2. Entity representation](#102-entity-representation)
     - [10.3. Obtaining a delta link](#103-obtaining-a-delta-link)
     - [10.4. Contents of a delta link response](#104-contents-of-a-delta-link-response)
     - [10.5. Using a delta link](#105-using-a-delta-link)
-- [11. JSON standardizations](#11-json-standardizations)
+  - [11. JSON standardizations](#11-json-standardizations)
     - [11.1. JSON formatting standardization for primitive types](#111-json-formatting-standardization-for-primitive-types)
     - [11.2. Guidelines for dates and times](#112-guidelines-for-dates-and-times)
-        - [11.2.1. Producing dates](#1121-producing-dates)
-        - [11.2.2. Consuming dates](#1122-consuming-dates)
-        - [11.2.3. Compatibility](#1123-compatibility)
+      - [11.2.1. Producing dates](#1121-producing-dates)
+      - [11.2.2. Consuming dates](#1122-consuming-dates)
+      - [11.2.3. Compatibility](#1123-compatibility)
     - [11.3. JSON serialization of dates and times](#113-json-serialization-of-dates-and-times)
-        - [11.3.1. The `DateLiteral` format](#1131-the-dateliteral-format)
-        - [11.3.2. Commentary on date formatting](#1132-commentary-on-date-formatting)
+      - [11.3.1. The `DateLiteral` format](#1131-the-dateliteral-format)
+      - [11.3.2. Commentary on date formatting](#1132-commentary-on-date-formatting)
     - [11.4. Durations](#114-durations)
     - [11.5. Intervals](#115-intervals)
     - [11.6. Repeating intervals](#116-repeating-intervals)
-- [12. Versioning](#12-versioning)
+  - [12. Versioning](#12-versioning)
     - [12.1. Versioning formats](#121-versioning-formats)
-        - [12.1.1. Group versioning](#1211-group-versioning)
+      - [12.1.1. Group versioning](#1211-group-versioning)
+        - [Examples of group versioning](#examples-of-group-versioning)
     - [12.2. When to version](#122-when-to-version)
-    - [12.3. Definition of a breaking change](#123-definition-of-a-breaking-change)
-- [13. Long running operations](#13-long-running-operations)
+      - [12.2.1 Why Centrify recommends conservative API versioning](#1221-why-centrify-recommends-conservative-api-versioning)
+      - [12.2.2 Version discovery](#1222-version-discovery)
+    - [12.3 Definition of a breaking change](#123-definition-of-a-breaking-change)
+  - [13. Long running operations](#13-long-running-operations)
     - [13.1. Resource based long running operations (RELO)](#131-resource-based-long-running-operations-relo)
     - [13.2. Stepwise long running operations](#132-stepwise-long-running-operations)
-        - [13.2.1. PUT](#1321-put)
-        - [13.2.2. POST](#1322-post)
-        - [13.2.3. POST, hybrid model](#1323-post-hybrid-model)
-        - [13.2.4. Operations resource](#1324-operations-resource)
-        - [13.2.5. Operation resource](#1325-operation-resource)
-        - [13.2.6. Operation tombstones](#1326-operation-tombstones)
-        - [13.2.7. The typical flow, polling](#1327-the-typical-flow-polling)
-        - [13.2.8. The typical flow, push notifications](#1328-the-typical-flow-push-notifications)
-        - [13.2.9. Retry-After](#1329-retry-after)
+      - [13.2.1. PUT](#1321-put)
+      - [13.2.2. POST](#1322-post)
+      - [13.2.3. POST, hybrid model](#1323-post-hybrid-model)
+      - [13.2.4. Operations resource](#1324-operations-resource)
+      - [13.2.5. Operation resource](#1325-operation-resource)
+        - [Percent complete](#percent-complete)
+        - [Target resource location](#target-resource-location)
+      - [13.2.6. Operation tombstones](#1326-operation-tombstones)
+      - [13.2.7. The typical flow, polling](#1327-the-typical-flow-polling)
+        - [Example of the typical flow, polling](#example-of-the-typical-flow-polling)
+      - [13.2.8. The typical flow, push notifications](#1328-the-typical-flow-push-notifications)
+        - [Example of the typical flow, push notifications existing subscription](#example-of-the-typical-flow-push-notifications-existing-subscription)
+      - [13.2.9. Retry-After](#1329-retry-after)
     - [13.3. Retention policy for operation results](#133-retention-policy-for-operation-results)
-- [14. Throttling, Quotas, and Limits](#14-throttling-quotas-and-limits)
+  - [14. Throttling, Quotas, and Limits](#14-throttling-quotas-and-limits)
     - [14.1. Principles](#141-principles)
     - [14.2. Return Codes (429 vs 503)](#142-return-codes-429-vs-503)
     - [14.3. Retry-After and RateLimit Headers](#143-retry-after-and-ratelimit-headers)
     - [14.4. Service Guidance](#144-service-guidance)
-        - [14.4.1. Responsiveness](#1441-responsiveness)
-        - [14.4.2. Rate Limits and Quotas](#1442-rate-limits-and-quotas)
-        - [14.4.3. Overloaded services](#1443-overloaded-services)
-        - [14.4.4. Example Response](#1444-example-response)
+      - [14.4.1. Responsiveness](#1441-responsiveness)
+      - [14.4.2. Rate Limits and Quotas](#1442-rate-limits-and-quotas)
+      - [14.4.3. Overloaded services](#1443-overloaded-services)
+      - [14.4.4. Example Response](#1444-example-response)
     - [14.5. Caller Guidance](#145-caller-guidance)
     - [14.6. Handling callers that ignore Retry-After headers](#146-handling-callers-that-ignore-retry-after-headers)
-- [15. Push notifications via webhooks](#15-push-notifications-via-webhooks)
+  - [15. Push notifications via webhooks](#15-push-notifications-via-webhooks)
     - [15.1. Scope](#151-scope)
     - [15.2. Principles](#152-principles)
     - [15.3. Types of subscriptions](#153-types-of-subscriptions)
     - [15.4. Call sequences](#154-call-sequences)
     - [15.5. Verifying subscriptions](#155-verifying-subscriptions)
     - [15.6. Receiving notifications](#156-receiving-notifications)
-        - [15.6.1. Notification payload](#1561-notification-payload)
+      - [15.6.1. Notification payload](#1561-notification-payload)
     - [15.7. Managing subscriptions programmatically](#157-managing-subscriptions-programmatically)
-        - [15.7.1. Creating subscriptions](#1571-creating-subscriptions)
-        - [15.7.2. Updating subscriptions](#1572-updating-subscriptions)
-        - [15.7.3. Deleting subscriptions](#1573-deleting-subscriptions)
-        - [15.7.4. Enumerating subscriptions](#1574-enumerating-subscriptions)
+      - [15.7.1. Creating subscriptions](#1571-creating-subscriptions)
+      - [15.7.2. Updating subscriptions](#1572-updating-subscriptions)
+      - [15.7.3. Deleting subscriptions](#1573-deleting-subscriptions)
+      - [15.7.4. Enumerating subscriptions](#1574-enumerating-subscriptions)
     - [15.8. Security](#158-security)
-- [16. Unsupported requests](#16-unsupported-requests)
+  - [16. Unsupported requests](#16-unsupported-requests)
     - [16.1. Essential guidance](#161-essential-guidance)
     - [16.2. Feature allow list](#162-feature-allow-list)
-        - [16.2.1. Error response](#1621-error-response)
-- [17. Naming guidelines](#17-naming-guidelines)
+      - [16.2.1. Error response](#1621-error-response)
+  - [17. Naming guidelines](#17-naming-guidelines)
     - [17.1. Approach](#171-approach)
     - [17.2. Casing](#172-casing)
     - [17.3. Names to avoid](#173-names-to-avoid)
@@ -160,30 +174,30 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
     - [17.7. Name properties](#177-name-properties)
     - [17.8. Collections and counts](#178-collections-and-counts)
     - [17.9. Common property names](#179-common-property-names)
-- [18. Appendix](#18-appendix)
+  - [18. Appendix](#18-appendix)
     - [18.1. Sequence diagram notes](#181-sequence-diagram-notes)
-        - [18.1.1. Push notifications, per user flow](#1811-push-notifications-per-user-flow)
-        - [18.1.2. Push notifications, firehose flow](#1812-push-notifications-firehose-flow)
+      - [18.1.1. Push notifications, per user flow](#1811-push-notifications-per-user-flow)
+      - [18.1.2. Push notifications, firehose flow](#1812-push-notifications-firehose-flow)
 
 <!-- /TOC -->
 
 ## 3. Introduction
-Developers access most Microsoft Cloud Platform resources via HTTP interfaces.
+Developers access most Centrify Cloud Platform resources via HTTP interfaces.
 Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to HTTP requests.
-Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment.
-Thus, a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
+Centrify must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment.
+Thus, a goal of these guidelines is to ensure Centrify REST APIs can be easily and consistently consumed by any client with basic HTTP support.
 
 To provide the smoothest possible experience for developers, it's important to have these APIs follow consistent design guidelines, thus making using them easy and intuitive.
-This document establishes the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently.
+This document establishes the guidelines to be followed by Centrify REST API developers for developing such APIs consistently.
 
 The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation and design decisions.
 
 These guidelines aim to achieve the following:
-- Define consistent practices and patterns for all API endpoints across Microsoft.
+- Define consistent practices and patterns for all API endpoints across Centrify.
 - Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large. [\*]
-- Make accessing Microsoft Services via REST interfaces easy for all application developers.
+- Make accessing Centrify Services via REST interfaces easy for all application developers.
 - Allow service developers to leverage the prior work of other services to implement, test and document REST endpoints defined consistently.
-- Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own REST endpoint design.
+- Allow for partners (e.g., non-Centrify entities) to use these guidelines for their own REST endpoint design.
 
 [\*] Note: The guidelines are designed to align with building services which comply with the REST architectural style, though they do not address or require building services that follow the REST constraints.
 The term "REST" is used throughout this document to mean services that are in the spirit of REST rather than adhering to REST by the book.*
@@ -202,7 +216,7 @@ If you are new to RESTful design, here are some good resources:
 
 ## 4. Interpreting the guidelines
 ### 4.1. Application of the guidelines
-These guidelines are applicable to any REST API exposed publicly by Microsoft or any partner service.
+These guidelines are applicable to any REST API exposed publicly by Centrify or any partner service.
 Private or internal APIs SHOULD also try to follow these guidelines because internal services tend to eventually be exposed publicly.
  Consistency is valuable to not only external customers but also internal service consumers, and these guidelines offer best practices useful for any service.
 
@@ -225,7 +239,7 @@ This work is licensed under the Creative Commons Attribution 4.0 International L
 To view a copy of this license, visit https://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 ## 5. Taxonomy
-As part of onboarding to Microsoft REST API Guidelines, services MUST comply with the taxonomy defined below.
+As part of onboarding to Centrify REST API Guidelines, services MUST comply with the taxonomy defined below.
 
 ### 5.1. Errors
 Errors, or more specifically Service Errors, are defined as a client passing invalid data to the service and the service _correctly_  rejecting that data.
@@ -291,7 +305,7 @@ https://api.contoso.com/v1.0/people/jdoe@contoso.com/inbox
 An example URL that is not friendly is:
 
 ```
-https://api.contoso.com/EWS/OData/Users('jdoe@microsoft.com')/Folders('AAMkADdiYzI1MjUzLTk4MjQtNDQ1Yy05YjJkLWNlMzMzYmIzNTY0MwAuAAAAAACzMsPHYH6HQoSwfdpDx-2bAQCXhUk6PC1dS7AERFluCgBfAAABo58UAAA=')
+https://api.contoso.com/EWS/OData/Users('jdoe@centrify.com')/Folders('AAMkADdiYzI1MjUzLTk4MjQtNDQ1Yy05YjJkLWNlMzMzYmIzNTY0MwAuAAAAAACzMsPHYH6HQoSwfdpDx-2bAQCXhUk6PC1dS7AERFluCgBfAAABo58UAAA=')
 ```
 
 A frequent pattern that comes up is the use of URLs as values.
@@ -314,7 +328,7 @@ Services that can generate URLs longer than 2,083 characters MUST make accommoda
 Here are some sources for determining what target clients support:
 
  * [https://stackoverflow.com/a/417184](https://stackoverflow.com/a/417184)
- * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
+ * [https://blogs.msdn.centrify.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.centrify.com/ieinternals/2014/08/13/url-length-limits/)
 
 Also note that some technology stacks have hard and adjustable URL limits, so keep this in mind as you design your services.
 
@@ -335,17 +349,17 @@ Operations MUST use the proper HTTP methods whenever possible, and operation ide
 HTTP methods are frequently referred to as the HTTP verbs.
 The terms are synonymous in this context, however the HTTP specification uses the term method.
 
-Below is a list of methods that Microsoft REST services SHOULD support.
+Below is a list of methods that Centrify REST services SHOULD support.
 Not all resources will support all methods, but all resources using the methods below MUST conform to their usage.
 
 Method  | Description                                                                                                                | Is Idempotent
 ------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
 GET     | Return the current value of an object                                                                                      | True
-PUT     | Replace an object, or create a named object, when applicable                                                               | True
+PUT     | *strongly discouraged* Replace an object, or create a named object, when applicable                                        | True
 DELETE  | Delete an object                                                                                                           | True
 POST    | Create a new object based on the data provided, or submit a command                                                        | False
 HEAD    | Return metadata of an object for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
-PATCH   | Apply a partial update to an object                                                                                        | False
+PATCH   | *strongly encouraged* Apply a partial update to an object                                                                  | False
 OPTIONS | Get information about a request; see below for details.                                                                    | True
 
 <small>Table 1</small>
@@ -372,7 +386,19 @@ Services MAY also return the full metadata for the created item in the response.
 
 #### 7.4.2. PATCH
 PATCH has been standardized by IETF as the method to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]).
-Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.
+Centrify REST API Guidelines compliant APIs SHOULD support PATCH.
+Prefer JSON merge-patch ([RFC 7396](https://tools.ietf.org/html/rfc7396)) over JSON patch ([RFC 6902](https://tools.ietf.org/html/rfc6902)) as the accepted data format for PATCH operations.
+
+PREFER PATCH OVER PUT
+
+Consider the following sequence:
+
+* User1 creates a resource with version v2, using a new optional parameter.
+* Later, User2 wants to update the resource using unrelated settings.  Using version v1, User2 issues a GET, does the changes, and then issues a PUT to replace the resource definition.
+
+In this case, the optional parameter is lost because of the replace semantics.  The optional parameter only exists on API version v2, and not on version v1.
+
+Service teams SHOULD prefer and recommend PATCH operations for updating resources.
 
 #### 7.4.3. Creating resources via PATCH (UPSERT semantics)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH.
@@ -399,7 +425,7 @@ Where {help} is the URL to a documentation resource.
 For examples on use of OPTIONS, see [preflighting CORS cross-domain calls][cors-preflight].
 
 ### 7.5. Standard request headers
-The table of request headers below SHOULD be used by Microsoft REST API Guidelines services.
+The table of request headers below SHOULD be used by Centrify REST API Guidelines services.
 Using these headers is not mandated, but if used they MUST be used consistently.
 
 All header values MUST follow the syntax rules set forth in the specification where the header field is defined.
@@ -486,7 +512,7 @@ The default response format (no Accept header provided) SHOULD be application/js
 
 Accept Header    | Response type                      | Notes
 ---------------- | ---------------------------------- | -------------------------------------------
-application/json | Payload SHOULD be returned as JSON | Also accept text/javascript for JSONP cases
+application/json | Payload SHOULD be returned as JSON | No support of text/javascript and JSONP at this time.
 
 ```http
 GET https://api.contoso.com/v1.0/products/user
@@ -494,141 +520,35 @@ Accept: application/json
 ```
 
 #### 7.10.2. Error condition responses
-For non-success conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft REST API Guidelines services.
+
+For non-success conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Centrify REST API Guidelines services.
 This allows building of simple and reliable infrastructure to handle exceptions as a separate flow from successful responses.
-The following is based on the OData v4 JSON spec.
-However, it is very generic and does not require specific OData constructs.
-APIs SHOULD use this format even if they are not using other OData constructs.
 
-The error response MUST be a single JSON object.
-This object MUST have a name/value pair named "error." The value MUST be a JSON object.
-
-This object MUST contain name/value pairs with the names "code" and "message," and it MAY contain name/value pairs with the names "target," "details" and "innererror."
-
-The value for the "code" name/value pair is a language-independent string.
-Its value is a service-defined error code that SHOULD be human-readable.
-This code serves as a more specific indicator of the error than the HTTP error code specified in the response.
-Services SHOULD have a relatively small number (about 20) of possible values for "code," and all clients MUST be capable of handling all of them.
-Most services will require a much larger number of more specific error codes, which are not interesting to all clients.
-These error codes SHOULD be exposed in the "innererror" name/value pair as described below.
-Introducing a new value for "code" that is visible to existing clients is a breaking change and requires a version increase.
-Services can avoid breaking changes by adding new error codes to "innererror" instead.
-
-The value for the "message" name/value pair MUST be a human-readable representation of the error.
-It is intended as an aid to developers and is not suitable for exposure to end users.
-Services wanting to expose a suitable message for end users MUST do so through an [annotation][odata-json-annotations] or custom property.
-Services SHOULD NOT localize "message" for the end user, because doing so might make the value unreadable to the app developer who may be logging the value, as well as make the value less searchable on the Internet.
-
-The value for the "target" name/value pair is the target of the particular error (e.g., the name of the property in error).
-
-The value for the "details" name/value pair MUST be an array of JSON objects that MUST contain name/value pairs for "code" and "message," and MAY contain a name/value pair for "target," as described above.
-The objects in the "details" array usually represent distinct, related errors that occurred during the request.
-See example below.
-
-The value for the "innererror" name/value pair MUST be an object.
-The contents of this object are service-defined.
-Services wanting to return more specific errors than the root-level code MUST do so by including a name/value pair for "code" and a nested "innererror." Each nested "innererror" object represents a higher level of detail than its parent.
-When evaluating errors, clients MUST traverse through all of the nested "innererrors" and choose the deepest one that they understand.
-This scheme allows services to introduce new error codes anywhere in the hierarchy without breaking backwards compatibility, so long as old error codes still appear.
-The service MAY return different levels of depth and detail to different callers.
-For example, in development environments, the deepest "innererror" MAY contain internal information that can help debug the service.
-To guard against potential security concerns around information disclosure, services SHOULD take care not to expose too much detail unintentionally.
-Error objects MAY also include custom server-defined name/value pairs that MAY be specific to the code.
-Error types with custom server-defined properties SHOULD be declared in the service's metadata document.
-See example below.
-
-Error responses MAY contain [annotations][odata-json-annotations] in any of their JSON objects.
-
-We recommend that for any transient errors that may be retried, services SHOULD include a Retry-After HTTP header indicating the minimum number of seconds that clients SHOULD wait before attempting the operation again.
-
-##### ErrorResponse : Object
-
-Property | Type | Required | Description
--------- | ---- | -------- | -----------
-`error` | Error | ✔ | The error object.
-
-##### Error : Object
-
-Property | Type | Required | Description
--------- | ---- | -------- | -----------
-`code` | String | ✔ | One of a server-defined set of error codes.
-`message` | String | ✔ | A human-readable representation of the error.
-`target` | String |  | The target of the error.
-`details` | Error[] |  | An array of details about specific errors that led to this reported error.
-`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
-
-##### InnerError : Object
-
-Property | Type | Required | Description
--------- | ---- | -------- | -----------
-`code` | String |  | A more specific error code than was provided by the containing error.
-`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
-
-##### Examples
-
-Example of "innererror":
-
-```json
-{
-  "error": {
-    "code": "BadArgument",
-    "message": "Previous passwords may not be reused",
-    "target": "password",
-    "innererror": {
-      "code": "PasswordError",
-      "innererror": {
-        "code": "PasswordDoesNotMeetPolicy",
-        "minLength": "6",
-        "maxLength": "64",
-        "characterTypes": ["lowerCase","upperCase","number","symbol"],
-        "minDistinctCharacterTypes": "2",
-        "innererror": {
-          "code": "PasswordReuseNotAllowed"
-        }
-      }
-    }
-  }
-}
-```
-
-In this example, the most basic error code is "BadArgument," but for clients that are interested, there are more specific error codes in "innererror."
-The "PasswordReuseNotAllowed" code may have been added by the service at a later date, having previously only returned "PasswordDoesNotMeetPolicy."
-Existing clients do not break when the new error code is added, but new clients MAY take advantage of it.
-The "PasswordDoesNotMeetPolicy" error also includes additional name/value pairs that allow the client to determine the server's configuration, validate the user's input programmatically, or present the server's constraints to the user within the client's own localized messaging.
-
-Example of "details":
-
-```json
-{
-  "error": {
-    "code": "BadArgument",
-    "message": "Multiple errors in ContactInfo data",
-    "target": "ContactInfo",
-    "details": [
-      {
-        "code": "NullValue",
-        "target": "PhoneNumber",
-        "message": "Phone number must not be null"
-      },
-      {
-        "code": "NullValue",
-        "target": "LastName",
-        "message": "Last name must not be null"
-      },
-      {
-        "code": "MalformedValue",
-        "target": "Address",
-        "message": "Address is not valid"
-      }
-    ]
-  }
-}
-```
-
-In this example there were multiple problems with the request, with each individual error listed in "details."
+To that end, services SHOULD implement [RFC7807](https://tools.ietf.org/html/rfc7807)
 
 ### 7.11. HTTP Status Codes
-Standard HTTP Status Codes SHOULD be used; see the HTTP Status Code definitions for more information.
+Standard HTTP Status Codes SHOULD be used; see section 7.11.1 for a recommended subset.
+#### 7.11.1 HTTP Status Code Subset
+While full HTTP Status Code support MAY be desirable, services SHOULD focus on a subset of all status codes for the sake of simplicity.
+
+The status code subset is:
+[200 OK](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200)
+[201 Created](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201)
+[202 Accepted](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/202)
+[204 No Content](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/204)
+[301 Moved Permanently](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301)
+[304 Not Modified](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/304)
+[400 Bad Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400)
+[401 Unauthorized](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401)
+[403 Forbidden][https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403]
+[404 Not Found][https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404]
+[412 Precondition Failed](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/412)
+[413 Payload Too Large](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/413)
+[429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429)
+[500 Internal Server Error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500)
+[503 Service Unavailable](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503)
+
+
 
 ### 7.12. Client library optional
 Developers MUST be able to develop on a wide variety of platforms and languages, such as Windows, macOS, Linux, C#, Python, Node.js, and Ruby.
@@ -638,7 +558,7 @@ Services SHOULD be able to be accessed from simple HTTP tools such as curl witho
 Service developer portals SHOULD provide the equivalent of "Get Developer Token" to facilitate experimentation and curl support.
 
 ## 8. CORS
-Services compliant with the Microsoft REST API Guidelines MUST support [CORS (Cross Origin Resource Sharing)][cors].
+Services compliant with the Centrify REST API Guidelines MUST support [CORS (Cross Origin Resource Sharing)][cors].
 Services SHOULD support an allowed origin of CORS * and enforce authorization through valid OAuth tokens.
 Services SHOULD NOT support user credentials with origin validation.
 There MAY be exceptions for special cases.
@@ -927,7 +847,10 @@ Operators in the same category have equal precedence:
 RESTful APIs that return collections MAY return partial sets.
 Consumers of these services MUST expect partial result sets and correctly page through to retrieve an entire set.
 
-There are two forms of pagination that MAY be supported by RESTful APIs.
+Services MUST implement server driven paging, and MAY implement client driven paging.
+
+Client driven paging is discouraged.
+
 Server-driven paging mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads.
 Client-driven paging enables clients to request only the number of resources that it can use at a given time.
 
@@ -1008,11 +931,11 @@ When these operations are performed together, the evaluation order MUST be:
 3. **Pagination**. The materialized paginated view is presented over the filtered, sorted list. This applies to both server-driven pagination and client-driven pagination.
 
 ### 9.10. Empty Results
-When a filter is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
-In this example the filters supplied by the client resulted in a empty result set. 
-The response body is returned as normal and the _value_ attribute is set to a empty collection. 
-A client MAY be expecting metadata attributes like _maxItems_ based on the format of your responses to similar calls which produced results. 
-You SHOULD maintain consistency in your API whenever possible. 
+When a filter is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code.
+In this example the filters supplied by the client resulted in a empty result set.
+The response body is returned as normal and the _value_ attribute is set to a empty collection.
+A client MAY be expecting metadata attributes like _maxItems_ based on the format of your responses to similar calls which produced results.
+You SHOULD maintain consistency in your API whenever possible.
 
 ```http
 GET https://api.contoso.com/v1.0/products?$filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
@@ -1029,7 +952,9 @@ Content-Type: application/json
 ```
 
 ## 10. Delta queries
-Services MAY choose to support delta queries.
+Services MAY choose to support delta queries, however, we do not support them.
+
+This section remains as a reference for a time when we wish to implement delta queries.
 
 ### 10.1. Delta links
 Delta links are opaque, service-generated links that the client uses to retrieve subsequent changes to a result.
@@ -1044,7 +969,7 @@ The key principles of the Delta Query are:
 - Re-evaluate the query and compare it to original set of results; every entry uniquely in the current set MUST be returned as an Add operation, and every entry uniquely in the original set MUST be returned as a "remove" operation.
 - Each entity that previously did not match the criteria but matches it now MUST be returned as an "add"; conversely, each entity that previously matched the query but no longer does MUST be returned as a "@removed" entry.
 - Entities that have changed MUST be included in the set using their standard representation.
-- Services MAY add additional metadata to the "@removed" node, such as a reason for removal, or a "removed at" timestamp. We recommend teams coordinate with the Microsoft REST API Guidelines Working Group on extensions to help maintain consistency.
+- Services MAY add additional metadata to the "@removed" node, such as a reason for removal, or a "removed at" timestamp. We recommend teams coordinate with the Centrify REST API Guidelines Working Group on extensions to help maintain consistency.
 
 The delta link MUST NOT encode any client top or skip value.
 
@@ -1205,7 +1130,7 @@ O        | RealNumber      | "OLE Date"; integral part is the number of days sin
 T        | SignedInteger   | "Ticks"; number of ticks (100-nanosecond intervals) since midnight January 1, 1601. *See note below.*                                             | [MSDN][ticks-time]
 U        | SignedInteger   | "UNIX"; number of seconds since midnight, January 1, 1970.                                                                                        | [MSDN][unix-time]
 W        | SignedInteger   | "Windows"; number of milliseconds since midnight January 1, 1601. *See note below.*                                                               | [MSDN][windows-time]
-X        | RealNumber      | "Excel"; as for `O` but the year 1900 is incorrectly treated as a leap year, and day 0 is "January 0 (zero)."                                     | [Microsoft Support][excel-time]
+X        | RealNumber      | "Excel"; as for `O` but the year 1900 is incorrectly treated as a leap year, and day 0 is "January 0 (zero)."                                     | [Centrify Support][excel-time]
 
 **Important note for `C` and `W` kinds:** The native CLR and Windows times are represented by 100-nanosecond "tick" values.
 To interoperate with ECMAScript clients that have limited precision, _these values MUST be converted to and from milliseconds_ when (de)serialized as a `DateLiteral`.
@@ -1263,25 +1188,17 @@ Leaving out the value for [n] means an unbounded number of repetitions.
 For example, to repeat the interval of "P1Y2M10DT2H30M" five times starting at "2008-03-01T13:00:00Z," use "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M."
 
 ## 12. Versioning
-**All APIs compliant with the Microsoft REST API Guidelines MUST support explicit versioning.** It's critical that clients can count on services to be stable over time, and it's critical that services can add features and make changes.
+**All APIs compliant with the Centrify REST API Guidelines MUST support explicit versioning.** It's critical that clients can count on services to be stable over time, and it's critical that services can add features and make changes.
 
 ### 12.1. Versioning formats
 Services are versioned using a Major.Minor versioning scheme.
 Services MAY opt for a "Major" only version scheme in which case the ".0" is implied and all other rules in this section apply.
-Two options for specifying the version of a REST API request are supported:
-- Embedded in the path of the request URL, at the end of the service root: `https://api.contoso.com/v1.0/products/users`
+Two options for specifying the version of a REST API request are supported and required:
+
 - As a query string parameter of the URL: `https://api.contoso.com/products/users?api-version=1.0`
+- As an HTTP header: X-CFY-API-VERSION: 1.0
 
-Guidance for choosing between the two options is as follows:
-
-1. Services co-located behind a DNS endpoint MUST use the same versioning mechanism.
-2. In this scenario, a consistent user experience across the endpoint is paramount. The Microsoft REST API Guidelines Working Group recommends that new top-level DNS endpoints are not created without explicit conversations with your organization's leadership team.
-3. Services that guarantee the stability of their REST API's URL paths, even through future versions of the API, MAY adopt the query string parameter mechanism. This means the naming and structure of the relationships described in the API cannot evolve after the API ships, even across versions with breaking changes.
-4. Services that cannot ensure URL path stability across future versions MUST embed the version in the URL path.
-
-Certain bedrock services such as Microsoft's Azure Active Directory may be exposed behind multiple endpoints.
-Such services MUST support the versioning mechanisms of each endpoint, even if that means supporting multiple versioning mechanisms.
-
+A client may choose either option.
 #### 12.1.1. Group versioning
 Group versioning is an OPTIONAL feature that MAY be offered on services using the query string parameter mechanism.
 Group versions allow for logical grouping of API endpoints under a common versioning moniker.
@@ -1325,17 +1242,77 @@ PUT http://api.contoso.com/acct1/c1/b2?api-version=2011-12-07
 ```
 
 ### 12.2. When to version
-Services MUST increment their version number in response to any breaking API change.
-See the following section for a detailed discussion of what constitutes a breaking change.
-Services MAY increment their version number for nonbreaking changes as well, if desired.
+There are three groups of changes that may happen to an API.
 
-Use a new major version number to signal that support for existing clients will be deprecated in the future.
-When introducing a new major version, services MUST provide a clear upgrade path for existing clients and develop a plan for deprecation that is consistent with their business group's policies.
-Services SHOULD use a new minor version number for all other changes.
+1. Changes made to an **EXISTING** API version due to security or compliance reasons.  We shall refer to these types of changes as _Compliance changes_.
+2. Changes made to an API that may cause a client making the API call to fail, such as removal of an endpoint or property or changing the format of the body.  We refer to these types of changes as _Breaking changes_.
+3. Additive changes made to an API that do not cause a client making the API call to fail, such as the addition of a new optional property or a new endpoint.  We refer to these types of changes as _Evolutionary changes_.
 
-Online documentation of versioned services MUST indicate the current support status of each previous API version and provide a path to the latest version.
+With the exception of _Compliance changes_ (which are extremely rare), Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
 
-### 12.3. Definition of a breaking change
+A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
+
+| Property change        | Input        | Output       |
+|:-----------------------|:------------:|:------------:|
+| Remove a property      | Breaking     | Breaking     |
+| Add optional property  | Evolutionary | Breaking     |
+| Add required property  | Breaking     | Breaking     |
+| Data type change       | Breaking     | Breaking     |
+| Format change          | Breaking     | Breaking     |
+| Integer widens         | Evolutionary | Breaking     |
+| Integer narrows        | Breaking     | Evolutionary |
+| Add new value to enum  | Evolutionary | Breaking     |
+| Remove value from enum | Breaking     | Breaking     |
+| Optional to required   | Breaking     | Breaking     |
+| Required to optional   | Evolutionary | Breaking     |
+
+Breaking changes require prior approval of the Azure REST API review board and approval through the [Azure Global Breaking Change Policy][7]. In the case of deprecation, follow the [Azure Global Retirement Policy][7].  If the service is using SemVer for versioning, breaking changes constitute a major version change.
+
+Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
+
+#### 12.2.1 Why Centrify recommends conservative API versioning
+
+Azure history is replete with anecdotes that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
+
+Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
+
+There are a few mechanisms that can reduce breaking changes and their effects on our customers.
+
+#### 12.2.2 Version discovery
+
+Simpler clients may be hardcoded to a single version of a service. Since Azure services offer each version for a well-known period of time, a client that’s regularly maintained can be always operational without further complexity as long as during regular maintenance the client is moved forward to new versions in advance of older ones being retired.
+
+API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Azure or hosted on-premises). In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
+
+Azure services **SHOULD** support API version discovery.  If they support it:
+
+1. Services **MUST** support HTTP `OPTIONS` requests against all resources, including the root URL for a given tenant or the global root if no tenant identity is tracked or not a multi-tenant service
+2. Services **MUST** include the `api-supported-versions` header, containing a comma-separated list of versions conforming to the Azure versioning scheme. This list must include all group versions as well as all major-minor versions supported by the target resource. For cases where no specific version applies (e.g. sometimes the root resource), the list still must contain the group versions supported by the service.
+3. If a given service supports versions of the API that are known to be planned for deprecation in a year or less, it **MUST** include those versions (group and major.minor) in the `api-deprecated-versions` header.
+4. In addition to the functionality described here, services **MAY** support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
+5. Services **MAY** allow unauthenticated HTTP `OPTIONS` requests. When doing so, authors need to consider whether HTTP `OPTIONS` requests against non-existing resources result in 404s and whether that is leaking sensitive information. Certain scenarios, such as support for CORS pre-flight requests, require allowing unauthenticated HTTP `OPTIONS` requests.
+6. For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends **MUST** report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
+7. If using OData and addressing an expanded resource, the HTTP `OPTIONS` request **SHOULD** return the group versions that are supported across the expanded set.
+
+Example request to discover API versions (blob storage container list API):
+
+```text
+OPTIONS /?comp=list HTTP/1.1
+host: accountname.blob.core.azure.net
+```
+
+Example response:
+
+```text
+200 OK
+api-supported-versions: 2011-08,2012-02,1.1,2.0
+api-deprecated-versions: 2009-04,1.0
+Content-Length: 0
+```
+
+Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators. In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
+
+### 12.3 Definition of a breaking change
 Changes to the contract of an API are considered a breaking change.
 Changes that impact the backwards compatibility of an API are a breaking change.
 
@@ -1350,10 +1327,7 @@ Clear examples of breaking changes:
 3. Changes in Error Codes and Fault Contracts
 4. Anything that would violate the [Principle of Least Astonishment][principle-of-least-astonishment]
 
-Services MUST explicitly define their definition of a breaking change, especially with regard to adding new fields to JSON responses and adding new API arguments with default fields.
-Services that are co-located behind a DNS Endpoint with other services MUST be consistent in defining contract extensibility.
-
-The applicable changes described [in this section of the OData V4 spec][odata-breaking-changes] SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
+See main section of 12.2 for breaking changes table.
 
 ## 13. Long running operations
 Long running operations, sometimes called async operations, tend to mean different things to different people.
@@ -1716,7 +1690,7 @@ To handle this, services should design so that returning 429 or 503 is as inexpe
 ### 14.3. Retry-After and RateLimit Headers
 The Retry-After header is the standard way for responding to clients who are being throttled.
 It is also common, but optional, in the case of limits and quotas (but not overall system load) to respond with header describing the limit that was exceeded.
-However, services across Microsoft and the industry use a wide range of different headers for this purpose.
+However, services across Centrify and the industry use a wide range of different headers for this purpose.
 We recommend using three headers to describe the limit, the number of calls remaining under the limit, and the time when the limit will reset.
 However, other headers may be appropriate for specific types of limits. In all cases these must be documented.
 
@@ -1780,7 +1754,7 @@ Callers include all users of the API: tools, portals, other services, not just u
 2. Callers MAY assume that request is retriable after receiving a response with a Retry-After header without making any changes to the request.
 3. Clients SHOULD use shared SDKs and common transient fault libraries to implement the proper behavior
 
-See: https://docs.microsoft.com/en-us/azure/architecture/best-practices/transient-faults
+See: https://docs.centrify.com/en-us/azure/architecture/best-practices/transient-faults
 
 ### 14.6. Handling callers that ignore Retry-After headers
 Ideally, 429 and 503 returns are so low cost that even clients that retry immediately can be handled.
@@ -1988,7 +1962,7 @@ If the subscription was successfully created, the service MUST respond with the 
 Property Name      | Required | Notes
 ------------------ | -------- | -------------------------------------------------------------------------------------------
 id                 | Yes      | Unique ID of the new subscription that can be used later to update/delete the subscription.
-expirationDateTime | No       | Uses existing Microsoft REST API Guidelines defined time formats.
+expirationDateTime | No       | Uses existing Centrify REST API Guidelines defined time formats.
 
 Creation of subscriptions SHOULD be idempotent.
 The combination of properties scoped to the auth token, provides a uniqueness constraint.
@@ -2153,7 +2127,7 @@ The features are:
 #### 16.2.1. Error response
 Services MUST provide an error response if a caller requests an unsupported feature found in the feature allow list.
 The error response MUST be an HTTP status code from the 4xx series, indicating that the request cannot be fulfilled.
-Unless a more specific error status is appropriate for the given request, services SHOULD return "400 Bad Request" and an error payload conforming to the error response guidance provided in the Microsoft REST API Guidelines.
+Unless a more specific error status is appropriate for the given request, services SHOULD return "400 Bad Request" and an error payload conforming to the error response guidance provided in the Centrify REST API Guidelines.
 Services SHOULD include enough detail in the response message for a developer to determine exactly what portion of the request is not supported.
 
 Example:
@@ -2201,7 +2175,6 @@ Services SHOULD NOT use the following names:
 
 ### 17.5. Identity properties
 - Services MUST use string types for identity properties.
-- For OData services, the service MUST use the OData @id property to represent the canonical identifier of the resource.
 - Services MAY use the simple 'id' property to represent a local or legacy primary key value for a resource.
 - Services SHOULD use the name of the relationship postfixed with 'Id' to represent a foreign key to another resource, e.g. subscriptionId.
 	- The content of this property SHOULD be the canonical ID of the referenced resource.
@@ -2385,6 +2358,9 @@ note over DB Service: Confirm User Access Token
 DB Service -> -App Server : Response with data and new "since" token
 note right of App Server: Update status and cache new "since" token
 
+19. API Definition
+
+All Services **MUST** provide an [OpenAPI Definition]  that describes their service. The OpenAPI Specification is a key element of the Centrify SDK, and Doc plan and essential to improving the documentation, usability and discoverability of services.
 
 
 === End Text ===
@@ -2409,13 +2385,13 @@ note right of App Server: Update status and cache new "since" token
 [cors-simple-headers]: https://www.w3.org/TR/access-control/#simple-header
 [rfc-4627]: https://tools.ietf.org/html/rfc4627
 [iso-8601]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15
-[clr-time]: https://msdn.microsoft.com/en-us/library/System.DateTime(v=vs.110).aspx
+[clr-time]: https://msdn.centrify.com/en-us/library/System.DateTime(v=vs.110).aspx
 [ecmascript-time]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.1
-[ole-date]: https://docs.microsoft.com/en-us/windows/desktop/api/oleauto/nf-oleauto-varianttimetosystemtime
-[ticks-time]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
-[unix-time]: https://msdn.microsoft.com/en-us/library/1f4c8f33.aspx
-[windows-time]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
-[excel-time]: https://support.microsoft.com/kb/214326?wa=wsignin1.0
+[ole-date]: https://docs.centrify.com/en-us/windows/desktop/api/oleauto/nf-oleauto-varianttimetosystemtime
+[ticks-time]: https://msdn.centrify.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
+[unix-time]: https://msdn.centrify.com/en-us/library/1f4c8f33.aspx
+[windows-time]: https://msdn.centrify.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
+[excel-time]: https://support.centrify.com/kb/214326?wa=wsignin1.0
 [wikipedia-iso8601-durations]: https://en.wikipedia.org/wiki/ISO_8601#Durations
 [wikipedia-iso8601-intervals]: https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
 [wikipedia-iso8601-repeatingintervals]: https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals
