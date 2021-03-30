@@ -1,6 +1,6 @@
 # Summary
 
-This document is intended as a summary for Centrify engineers who want a high level summary of the API guidelines before reading into the details (if ever)
+This document is intended as a summary for Centrify engineers who want quick overview of the API guidelines before reading into the details (if ever)
 
 It also highlights how these guidelines are different from Centrify's traditional RPC based APIs.
 
@@ -13,18 +13,18 @@ Centrify service *may* deviate from the cheat sheet for exceptional use cases.
 
 |     Action                   | HTTP Method |       Parameters       |               Target path                    |               Meaning                             |            Example path               |            Response                                                  |  Example existings APIs                                        |
 |      ---                     |     ---     |          ---           |                  ---                         |                 ---                               |                ---                    |               ---                                                    |  ---                                                           |
-| Create, add to               |    POST     |         Body           | /$resourceList                               | Add a new resource to a list                      | /accounts                             | LocationHeader `\|` DenseResourceRepresentation `\|` Error           |  ServerManage/AddDatabase, ServerManage/AddDomain              |
-| Create, add to               |    POST     |         Body           | /$resourceList/$nameOrId/$relatedList        | Add a new resource to a resource's list           | /accounts/db2-root/credentials        | LocationHeader `\|` DenseResourceRepresentation `\|` Error           |  ServerManage/AddAccount, Aws/AddAccessKey                     |
-| Read, search...              |    GET      |         Query          | /$resourceList                               | Get a list of resources                           | /accounts                             | ListOfSparseResources `\|` Error                                     |  CloudProvider/GetAllCloudProviders                            |
-| Read, search...              |    GET      |         Query          | /$resourceList/$nameOrId/$relatedList        | Get a list of related resources                   | /accounts/db2-root/credentials        | ListOfSparseResources `\|` Error                                     |  CloudProvider/GetCloudProviderCollectionPermissions           |
-| Read, search...              |    GET      |         Query          | /$resourceList/$nameOrId                     | Get a single resource                             | /accounts/db2-root                    | DenseResourceRepresentation `\|` Error                               |  CloudProvider/GetCloudProvider                                |
-| Modify partially             |    PATCH    |         Body           | /$resourceList/$nameOrId                     | Partially modify a single resource                | /accounts/db2-root                    | LocationHeader `\|` DenseResourceRepresentation `\|` Error           |  Roles/UpdateRole                                              |
-| Replace                      |    PUT      |         Body           | /$resourceList/$nameOrId                     | Fully modify a single resource                    | /accounts/db2-root                    | LocationHeader `\|` DenseResourceRepresentation `\|` Error           |  ServerManage/UpdateAccount, ServerManage/UpdateServer         |
-| Remove, delete               |    DELETE   |         Query          | /$resourceList/$nameOrId                     | Delete a single resource from a list              | /accounts/db2-root                    | OperationResult `\|` Error                                           |  Aws/DeleteAccessKey, CloudProvider/DeleteCloudProvider        |
-| Remove, delete               |    DELETE   |         Query          | /$resourceList/$nameOrId>/$relatedList       | Delete a single resource from a resource list     | /accounts/db2-root/credentials        | OperationResult `\|` Error                                           |  Aws/DeleteAccessKey, Aws/DeleteAccessKey                      |
-| $complexNotCrudOperation     |    POST     |      Body, Query       | /$function                                   | Initiate a standalone complex operation           | /lock                                 | OperationResult `\|` Error                                           |  Core/GeneratePassword                                         |
-| $complexNotCrudOperation     |    POST     |      Body, Query       | /$resourceList/$function                     | Initiate a complex operation on a list            | /accounts                             | OperationResult `\|` Error                                           |  Aws/VerifyAccessKey                                           |
-| $complexNotCrudOperation     |    POST     |      Body, Query       | /$resourceList/$nameOrId/$function           | Initiate a complex operation on a single resource | /accounts/db2-root/manage             | OperationResult `\|` Error                                           |  Aws/VerifyAccessKeyForUserAccount                             |
+| Create, add to               |    POST     |         Body           | /$resourceList                               | Add a new resource to a list                      | /accounts                             | LocationHeader `|` DenseResource `|` Error                           |  ServerManage/AddDatabase, ServerManage/AddDomain              |
+| Create, add to               |    POST     |         Body           | /$resourceList/$nameOrId/$relatedList        | Add a new resource to a resource's list           | /accounts/db2-root/credentials        | LocationHeader `|` DenseResource `|` Error                           |  ServerManage/AddAccount, Aws/AddAccessKey                     |
+| Read, search...              |    GET      |         Query          | /$resourceList                               | Get a list of resources                           | /accounts                             | List`<`SparseResource`>` `|` Error                                   |  CloudProvider/GetAllCloudProviders                            |
+| Read, search...              |    GET      |         Query          | /$resourceList/$nameOrId/$relatedList        | Get a list of related resources                   | /accounts/db2-root/credentials        | List`<`SparseResource`>` `|` Error                                   |  CloudProvider/GetCloudProviderCollectionPermissions           |
+| Read, search...              |    GET      |         Query          | /$resourceList/$nameOrId                     | Get a single resource                             | /accounts/db2-root                    | DenseResource `|` Error                                              |  CloudProvider/GetCloudProvider                                |
+| Modify partially             |    PATCH    |         Body           | /$resourceList/$nameOrId                     | Partially modify a single resource                | /accounts/db2-root                    | LocationHeader `|` DenseResource `|` Error                           |  Roles/UpdateRole                                              |
+| Replace                      |    PUT      |         Body           | /$resourceList/$nameOrId                     | Fully modify a single resource                    | /accounts/db2-root                    | LocationHeader `|` DenseResource `|` Error                           |  ServerManage/UpdateAccount, ServerManage/UpdateServer         |
+| Remove, delete               |    DELETE   |         Query          | /$resourceList/$nameOrId                     | Delete a single resource from a list              | /accounts/db2-root                    | OperationResult `|` Error                                            |  Aws/DeleteAccessKey, CloudProvider/DeleteCloudProvider        |
+| Remove, delete               |    DELETE   |         Query          | /$resourceList/$nameOrId>/$relatedList       | Delete a single resource from a resource list     | /accounts/db2-root/credentials        | OperationResult `|` Error                                            |  Aws/DeleteAccessKey, Aws/DeleteAccessKey                      |
+| $complexNotCrudOperation     |    POST     |      Body, Query       | /$function                                   | Initiate a standalone complex operation           | /lock                                 | OperationResult `|` Error                                            |  Core/GeneratePassword                                         |
+| $complexNotCrudOperation     |    POST     |      Body, Query       | /$resourceList/$function                     | Initiate a complex operation on a list            | /accounts                             | OperationResult `|` Error                                            |  Aws/VerifyAccessKey                                           |
+| $complexNotCrudOperation     |    POST     |      Body, Query       | /$resourceList/$nameOrId/$function           | Initiate a complex operation on a single resource | /accounts/db2-root/manage             | OperationResult `|` Error                                            |  Aws/VerifyAccessKeyForUserAccount                             |
 | $alias                       |    `\*`     |         `\*`           | `\*`                                         | A shorthand path for the consumer                 | /me                                   | `\*`                                                                 |  UserMgmt/GetUserInfo                                          |
 
 ### Cheat sheet definitions
@@ -51,7 +51,7 @@ Centrify service *may* deviate from the cheat sheet for exceptional use cases.
 | ---                          | ---                                                                                                                                                                                      |
 | LocationHeader               | An HTTP header providing the URL of the new resource instead of having a full DenseResourceRepresentation.  Saves bandwidth/processing but slightly harder to use for clients.           |
 | DenseResourceRepresentation  | A "full" representation of the resource, which optionally can be controlled by client using "include" and "embed" query parameters                                                       |
-| ListOfSparseResources        | A "sparse" representation, tuned for performance and common use cases.                                                                                                                   |
+| List                         | A common list representation which contains sparse resources                                                                                                                             |
 | OperationResult              | A standard operation result format defined below.                                                                                                                                        |
 | Error                        | A RFC7807 compliant error response                                                                                                                                                       |
 
@@ -63,11 +63,11 @@ Patterns for "global" functionality which is common to many resources, or accept
 
 Centrify specifies a common list of resources representation so clients can make some common decisions, regardless of the type of resource.
 
-#### Sparse resource representation
+#### SparseResource
 
 Centrify specifies a common sparse resource representation so clients can make some common decisions, regardless of the type of resource.
 
-#### Dense resource representation
+#### DenseResource
 
 Centrify specifies a common dense resource representation so clients can make some common decisions, regardless of the type of resource.
 
@@ -111,7 +111,7 @@ This standard embraces standard HTTP verbs which Centrify historically did not u
 
 This standard embraces traditional/standard REST url format.
 
-See: 7.1, 9.3
+See: 7.1, 9.3, cheat sheet.
 
 ### Error format
 
