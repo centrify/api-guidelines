@@ -56,6 +56,7 @@ Note this work is based off of https://github.com/microsoft/api-guidelines by gr
     - [7.4. Supported methods](#74-supported-methods)
       - [7.4.1. POST](#741-post)
       - [7.4.2. PATCH](#742-patch)
+        - [7.4.2.1 PATCH values for an attribute](#7421-patch-values-for-an-attribute)
       - [7.4.3. Creating resources via PATCH (UPSERT semantics)](#743-creating-resources-via-patch-upsert-semantics)
       - [7.4.4. Options and link headers](#744-options-and-link-headers)
     - [7.5. Standard request headers](#75-standard-request-headers)
@@ -393,12 +394,46 @@ PREFER PATCH OVER PUT
 
 Consider the following sequence:
 
-* User1 creates a resource with version v2, using a new optional parameter.
-* Later, User2 wants to update the resource using unrelated settings.  Using version v1, User2 issues a GET, does the changes, and then issues a PUT to replace the resource definition.
+- User1 creates a resource with version v2, using a new optional parameter.
+- Later, User2 wants to update the resource using unrelated settings.  Using version v1, User2 issues a GET, does the changes, and then issues a PUT to replace the resource definition.
 
 In this case, the optional parameter is lost because of the replace semantics.  The optional parameter only exists on API version v2, and not on version v1.
 
 Service teams SHOULD prefer and recommend PATCH operations for updating resources.
+
+##### 7.4.2.1 PATCH values for an attribute
+
+Note null should be considered a "clear" of the attribute.
+There is a special case historically at Centrify, in regard to the policy system.
+This special case is because the Policy system uses precendence logic for determining which "object" to get an attribute from.
+For instance: should it use the setting on a policy, globally, on a computer, or on an account?
+Because of this logic, it cares whether an attribute is set, or not set, on each object.
+For the purposes of a PATCH, null should be considered "not set". Another value must be used to indicate "this is set, but it means this attribute is off/disabled etc."
+For instance, for an attribute of boolean type, say "PasswordCheckoutAllowed", then the variations are:
+
+"Not Set"
+```
+PATCH /accounts/foo HTTP/1.1
+Content-Type: application/json
+
+{"PasswordCheckoutAllowed": null}
+```
+
+"Set to true"
+```
+PATCH /accounts/foo HTTP/1.1
+Content-Type: application/json
+
+{"PasswordCheckoutAllowed": true}
+```
+
+"Set to false"
+```
+PATCH /accounts/foo HTTP/1.1
+Content-Type: application/json
+
+{"PasswordCheckoutAllowed": false}
+```
 
 #### 7.4.3. Creating resources via PATCH (UPSERT semantics)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH.
