@@ -283,7 +283,7 @@ Services that do so MUST make this clear in their documentation and clients MUST
 Clients MUST NOT rely on the order in which data appears in JSON service responses.
 For example, clients SHOULD be resilient to the reordering of fields within a JSON object.
 When supported by the service, clients MAY request that data be returned in a specific order.
-For example, services MAY support the use of the _$orderBy_ querystring parameter to specify the order of elements within a JSON array.
+For example, services MAY support the use of the orderBy querystring parameter to specify the order of elements within a JSON array.
 Services MAY also explicitly specify the ordering of some elements as part of the service contract.
 For example, a service MAY always return a JSON object's "type" information as the first field in an object to simplify response parsing on the client.
 Clients MAY rely on ordering behavior explicitly identified by the service.
@@ -814,18 +814,18 @@ Services that support _$filter_ SHOULD support the following minimal set of oper
 Operator             | Description           | Example
 -------------------- | --------------------- | -----------------------------------------------------
 Comparison Operators |                       |
-eq                   | Equal                 | city eq 'Redmond'
-ne                   | Not equal             | city ne 'London'
-gt                   | Greater than          | price gt 20
-ge                   | Greater than or equal | price ge 10
-lt                   | Less than             | price lt 20
-le                   | Less than or equal    | price le 100
+eq                   | Equal                 | name eq 'unix'
+ne                   | Not equal             | name ne 'unix'
+gt                   | Greater than          | activeCheckouts gt 0
+ge                   | Greater than or equal | activeCheckouts ge 1
+lt                   | Less than             | activeCheckouts lt 2
+le                   | Less than or equal    | activeCheckouts le 1
 Logical Operators    |                       |
-and                  | Logical and           | price le 200 and price gt 3.5
-or                   | Logical or            | price le 3.5 or price gt 200
-not                  | Logical negation      | not price le 3.5
+and                  | Logical and           | name eq 'unix' and activeCheckouts gt 0
+or                   | Logical or            | name eq 'unix' and activeCheckouts gt 0
+not                  | Logical negation      | not name eq 'unix'
 Grouping Operators   |                       |
-( )                  | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
+( )                  | Precedence grouping   | (name eq 'unix' and activeCheckouts gt 0) and managed eq true
 
 #### 9.7.2. Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
