@@ -1295,7 +1295,7 @@ A _breaking change_ is any change in the API that may cause client or service co
 |:-----------------------|:------------:|:------------:|
 | Remove a property      | Breaking     | Breaking     |
 | Add optional property  | Evolutionary | Evolutionary |
-| Add required property  | Breaking     | Breaking     |
+| Add required property  | Breaking     | Evolutionary |
 | Data type change       | Breaking     | Breaking     |
 | Format change          | Breaking     | Breaking     |
 | Integer widens         | Evolutionary | Breaking     |
