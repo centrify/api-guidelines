@@ -115,9 +115,9 @@ Note this work is based off of https://github.com/microsoft/api-guidelines by gr
     - [12.1. Versioning formats](#121-versioning-formats)
       - [12.1.1. Group versioning](#1211-group-versioning)
         - [Examples of group versioning](#examples-of-group-versioning)
-    - [12.2.1 When to version](#1221-when-to-version)
-      - [12.2.2 Version discovery](#1222-version-discovery)
-      - [12.2.3 Why a team may want to choose conservative API versioning](#1223-why-a-team-may-want-to-choose-conservative-api-versioning)
+    - [12.2. When to version](#122-when-to-version)
+      - [12.2.1 Version discovery](#1221-version-discovery)
+      - [12.2.2 Why a team may want to choose conservative API versioning](#1222-why-a-team-may-want-to-choose-conservative-api-versioning)
     - [12.3 Definition of a breaking change](#123-definition-of-a-breaking-change)
   - [13. Long running operations](#13-long-running-operations)
     - [13.1. Resource based long running operations (RELO)](#131-resource-based-long-running-operations-relo)
@@ -1280,7 +1280,7 @@ GET http://api.contoso.com/acct1/c1/blob2?api-version=1
 PUT http://api.contoso.com/acct1/c1/b2?api-version=2013-03-21
 ```
 
-### 12.2.1 When to version
+### 12.2. When to version
 There are three groups of changes that may happen to an API.
 
 1. Changes made to an **EXISTING** API version due to security or compliance reasons.  We shall refer to these types of changes as _Compliance changes_.
@@ -1309,7 +1309,7 @@ Breaking changes do not require any approvals, but *must* increment the API majo
 
 Evolutionary changes do not require any approvals or version changes.
 
-#### 12.2.2 Version discovery
+#### 12.2.1 Version discovery
 
 Simpler clients may be hardcoded to a single version of a service. Since Centrify services offer each version for a well-known period of time, a client that’s regularly maintained can be always operational without further complexity as long as during regular maintenance the client is moved forward to new versions in advance of older ones being retired.
 
@@ -1341,7 +1341,7 @@ api-deprecated-versions: 2009-04,1.0
 Content-Length: 0
 ```
 
-#### 12.2.3 Why a team may want to choose conservative API versioning
+#### 12.2.2 Why a team may want to choose conservative API versioning
 
 Conservative API versioning is when you define breaking changes to include more types of changes, *and* require minor version bumps for evolutionary changes.
 
