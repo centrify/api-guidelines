@@ -1,4 +1,11 @@
 # Centrify REST API Guidelines
+
+# PUBLIC ARCHIVE
+
+> ***NOTE***
+> This repo is archived.
+> This is still available under the licensing terms, but is not being actively developed or updated any further. Please see [DelineaXPM](https://github.com/DelineaXPM) for active projects.
+
 The [Centrify REST API Guidelines](Guidelines.md) are Centrify's internal company-wide REST API design guidelines.
 Teams at Centrify typically reference this document when setting API design policy.
 They may additionally create documents specific to their team, adding further guidance or making adjustments as appropriate to their circumstances.
