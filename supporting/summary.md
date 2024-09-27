@@ -25,10 +25,10 @@ Centrify service *may* deviate from the cheat sheet for exceptional use cases.
 
 |     Action                   | HTTP Method |       Parameters       |               Target path                    |               Meaning                             |            Example path               |            Response                                                  |  Example existings APIs                                        |
 |      ---                     |     ---     |          ---           |                  ---                         |                 ---                               |                ---                    |               ---                                                    |  ---                                                           |
-| Create, add to               |    POST     |         Body           | /$resourceList/$nameOrId/$relatedList        | Add a new resource to a resource's list           | /accounts/db2-root/credentials        | LocationHeader `|` DenseResource `|` Error                           |  ServerManage/AddAccount, Aws/AddAccessKey                     |
+| Create, add to               |    POST     |         Body           | /$resourceList/$nameOrId/$relatedList        | Add a new resource to a resource's list           | /accounts/db2-root/accounts           | LocationHeader `|` DenseResource `|` Error                           |  ServerManage/AddAccount, Aws/AddAccessKey                     |
 | Read, search...              |    GET      |         Query          | /$resourceList                               | Get a list of resources                           | /accounts                             | List`<`SparseResource`>` `|` Error                                   |  CloudProvider/GetAllCloudProviders                            |
-| Read, search...              |    GET      |         Query          | /$resourceList/$nameOrId/$relatedList        | Get a list of related resources                   | /accounts/db2-root/credentials        | List`<`SparseResource`>` `|` Error                                   |  CloudProvider/GetCloudProviderCollectionPermissions           |
-| Remove, delete               |    DELETE   |         Query          | /$resourceList/$nameOrId/$relatedList        | Delete a single resource from a resource list     | /accounts/db2-root/credentials        | OperationResult `|` Error                                            |  Aws/DeleteAccessKey, Aws/DeleteAccessKey                      |
+| Read, search...              |    GET      |         Query          | /$resourceList/$nameOrId/$relatedList        | Get a list of related resources                   | /accounts/db2-root/accounts           | List`<`SparseResource`>` `|` Error                                   |  CloudProvider/GetCloudProviderCollectionPermissions           |
+| Remove, delete               |    DELETE   |         Query          | /$resourceList/$nameOrId/$relatedList        | Delete a single resource from a resource list     | /accounts/db2-root/accounts           | OperationResult `|` Error                                            |  Aws/DeleteAccessKey, Aws/DeleteAccessKey                      |
 | $complexNotCrudOperation     |    POST     |      Body, Query       | /$resourceList/$function                     | Initiate a complex operation on a list            | /accounts/rotate                      | OperationResult `|` Error                                            |  Aws/VerifyAccessKey                                           |
 
 ### Singletons
@@ -87,7 +87,7 @@ For example:
 
 ```text
 
-GET /accounts HTTP/1.1
+GET /accounts?limit=75&orderBy=name%20desc HTTP/1.1
 
 {
     object: 'account',

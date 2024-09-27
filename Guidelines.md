@@ -4,7 +4,7 @@
 
 Name | Name | Name |
 ---------------------------- | -------------------------------------- | ----------------------------------------
-Macy Abbey (Architect )      |                                        |
+Macy Abbey (Architect )      | Rich Loose (Architect)                 |
 
 
 <div style="font-size:150%">
@@ -116,8 +116,8 @@ Note this work is based off of https://github.com/microsoft/api-guidelines by gr
       - [12.1.1. Group versioning](#1211-group-versioning)
         - [Examples of group versioning](#examples-of-group-versioning)
     - [12.2. When to version](#122-when-to-version)
-      - [12.2.1 Why Centrify recommends conservative API versioning](#1221-why-centrify-recommends-conservative-api-versioning)
-      - [12.2.2 Version discovery](#1222-version-discovery)
+      - [12.2.1 Version discovery](#1221-version-discovery)
+      - [12.2.2 Why a team may want to choose conservative API versioning](#1222-why-a-team-may-want-to-choose-conservative-api-versioning)
     - [12.3 Definition of a breaking change](#123-definition-of-a-breaking-change)
   - [13. Long running operations](#13-long-running-operations)
     - [13.1. Resource based long running operations (RELO)](#131-resource-based-long-running-operations-relo)
@@ -1228,21 +1228,26 @@ For example, to repeat the interval of "P1Y2M10DT2H30M" five times starting at "
 ### 12.1. Versioning formats
 Services are versioned using a Major.Minor versioning scheme.
 Services MAY opt for a "Major" only version scheme in which case the ".0" is implied and all other rules in this section apply.
+For simplicity and ease of maintenance, most teams choose to only implement Major versioning with Evolutionary changes not requiring a major version bump.
+
 Two options for specifying the version of a REST API request are supported and required:
 
 - As a query string parameter of the URL: `https://api.contoso.com/products/users?api-version=1.0`
 - As an HTTP header: X-CFY-API-VERSION: 1.0
 
 A client may choose either option.
+
 #### 12.1.1. Group versioning
 Group versioning is an OPTIONAL feature that MAY be offered on services using the query string parameter mechanism.
+Group versioning is not currently in use at Centrify.
+Group versioning is one solution for hiding complexity of microservices behind a single endpoint from clients.
 Group versions allow for logical grouping of API endpoints under a common versioning moniker.
 This allows developers to look up a single version number and use it across multiple endpoints.
 Group version numbers are well known, and services SHOULD reject any unrecognized values.
 
-Internally, services will take a Group Version and map it to the appropriate Major.Minor version.
+Internally, services will take a Group Version and map it to the appropriate Major version.
 
-The Group Version format is defined as YYYY-MM-DD, for example 2012-12-07 for December 7, 2012. This Date versioning format applies only to Group Versions and SHOULD NOT be used as an alternative to Major.Minor versioning.
+The Group Version format is defined as YYYY-MM-DD, for example 2012-12-07 for December 7, 2012. This Date versioning format applies only to Group Versions and SHOULD NOT be used as an alternative to Major versioning.
 
 ##### Examples of group versioning
 
@@ -1250,30 +1255,29 @@ The Group Version format is defined as YYYY-MM-DD, for example 2012-12-07 for De
 |:-----------|:------------|
 | 2012-12-01 | 1.0         |
 |            | 1.1         |
-|            | 1.2         |
-| 2013-03-21 | 1.0         |
 |            | 2.0         |
 |            | 3.0         |
-|            | 3.1         |
-|            | 3.2         |
-|            | 3.3         |
+| 2013-03-21 | 1.0         |
+|            | 1.1         |
+|            | 2.0         |
+|            | 3.0         |
+|            | 4.0         |
 
 Version Format                | Example                | Interpretation
 ----------------------------- | ---------------------- | ------------------------------------------
-{groupVersion}                | 2013-03-21, 2012-12-01 | 3.3, 1.2
-{majorVersion}                | 3                      | 3.0
-{majorVersion}.{minorVersion} | 1.2                    | 1.2
+{groupVersion}                | 2013-03-21, 2012-12-01 | 4, 3
+{majorVersion}                | 3                      | 3
 
-Clients can specify either the group version or the Major.Minor version:
+Clients can specify either the group version or the Major version:
 
 For example:
 
 ```http
-GET http://api.contoso.com/acct1/c1/blob2?api-version=1.0
+GET http://api.contoso.com/acct1/c1/blob2?api-version=1
 ```
 
 ```http
-PUT http://api.contoso.com/acct1/c1/b2?api-version=2011-12-07
+PUT http://api.contoso.com/acct1/c1/b2?api-version=2013-03-21
 ```
 
 ### 12.2. When to version
@@ -1283,46 +1287,38 @@ There are three groups of changes that may happen to an API.
 2. Changes made to an API that may cause a client making the API call to fail, such as removal of an endpoint or property or changing the format of the body.  We refer to these types of changes as _Breaking changes_.
 3. Additive changes made to an API that do not cause a client making the API call to fail, such as the addition of a new optional property or a new endpoint.  We refer to these types of changes as _Evolutionary changes_.
 
-With the exception of _Compliance changes_ (which are extremely rare), Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
+With the exception of _Compliance changes_ (which are extremely rare), Centrify services **MUST** update the version number of their API whenever there is a _breaking change_ to the API, no matter how small.  Centrify expects clients to handle evolutionary changes appropriately.
 
-A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
+A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
 
 | Property change        | Input        | Output       |
 |:-----------------------|:------------:|:------------:|
 | Remove a property      | Breaking     | Breaking     |
-| Add optional property  | Evolutionary | Breaking     |
-| Add required property  | Breaking     | Breaking     |
+| Add optional property  | Evolutionary | Evolutionary |
+| Add required property  | Breaking     | Evolutionary |
 | Data type change       | Breaking     | Breaking     |
 | Format change          | Breaking     | Breaking     |
 | Integer widens         | Evolutionary | Breaking     |
 | Integer narrows        | Breaking     | Evolutionary |
 | Add new value to enum  | Evolutionary | Breaking     |
 | Remove value from enum | Breaking     | Breaking     |
-| Optional to required   | Breaking     | Breaking     |
+| Optional to required   | Breaking     | Evolutionary |
 | Required to optional   | Evolutionary | Breaking     |
 
-Breaking changes require prior approval of the Azure REST API review board and approval through the [Azure Global Breaking Change Policy][7]. In the case of deprecation, follow the [Azure Global Retirement Policy][7].  If the service is using SemVer for versioning, breaking changes constitute a major version change.
+Breaking changes do not require any approvals, but *must* increment the API major version.
 
-Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
+Evolutionary changes do not require any approvals or version changes.
 
-#### 12.2.1 Why Centrify recommends conservative API versioning
+#### 12.2.1 Version discovery
 
-Azure history is replete with anecdotes that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
+Simpler clients may be hardcoded to a single version of a service. Since Centrify services offer each version for a well-known period of time, a client that’s regularly maintained can be always operational without further complexity as long as during regular maintenance the client is moved forward to new versions in advance of older ones being retired.
 
-Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
+API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Centrify or hosted on-premises). In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
 
-There are a few mechanisms that can reduce breaking changes and their effects on our customers.
-
-#### 12.2.2 Version discovery
-
-Simpler clients may be hardcoded to a single version of a service. Since Azure services offer each version for a well-known period of time, a client that’s regularly maintained can be always operational without further complexity as long as during regular maintenance the client is moved forward to new versions in advance of older ones being retired.
-
-API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Azure or hosted on-premises). In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
-
-Azure services **SHOULD** support API version discovery.  If they support it:
+Centrify services **MAY** support API version discovery.  If they support it:
 
 1. Services **MUST** support HTTP `OPTIONS` requests against all resources, including the root URL for a given tenant or the global root if no tenant identity is tracked or not a multi-tenant service
-2. Services **MUST** include the `api-supported-versions` header, containing a comma-separated list of versions conforming to the Azure versioning scheme. This list must include all group versions as well as all major-minor versions supported by the target resource. For cases where no specific version applies (e.g. sometimes the root resource), the list still must contain the group versions supported by the service.
+2. Services **MUST** include the `api-supported-versions` header, containing a comma-separated list of versions conforming to the Centrify versioning scheme. This list must include all group versions as well as all major-minor versions supported by the target resource. For cases where no specific version applies (e.g. sometimes the root resource), the list still must contain the group versions supported by the service.
 3. If a given service supports versions of the API that are known to be planned for deprecation in a year or less, it **MUST** include those versions (group and major.minor) in the `api-deprecated-versions` header.
 4. In addition to the functionality described here, services **MAY** support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
 5. Services **MAY** allow unauthenticated HTTP `OPTIONS` requests. When doing so, authors need to consider whether HTTP `OPTIONS` requests against non-existing resources result in 404s and whether that is leaking sensitive information. Certain scenarios, such as support for CORS pre-flight requests, require allowing unauthenticated HTTP `OPTIONS` requests.
@@ -1345,6 +1341,37 @@ api-deprecated-versions: 2009-04,1.0
 Content-Length: 0
 ```
 
+#### 12.2.2 Why a team may want to choose conservative API versioning
+
+Conservative API versioning is when you define breaking changes to include more types of changes, *and* require minor version bumps for evolutionary changes.
+
+This leads to significant implementation overhead when compared to non-conservative versioning as described in 12.2.1.
+
+For instance, if you add a property in a response object in conservative versioning, you *must* increment the minor version, which leads to some amount of overhead in the endpoint's implementation to separate out the implementation of 1.0 from 1.1. In non-conservative versioning, you do not need to increment the minor version on an evolutionary change, so no change is needed besides adding the property to the response. This effectively means that most features that effect APIs will increment a minor version.
+
+This overhead may be worthwhile to a team which rates stability of clients higher than the cost of this overhead over time.
+
+Conservative API versioning breaking/evolutionary definitions:
+
+ | Property change        | Input        | Output       |
+ |:-----------------------|:------------:|:------------:|
+ | Remove a property      | Breaking     | Breaking     |
+ | Add optional property  | Evolutionary | Breaking     |
+ | Add required property  | Breaking     | Breaking     |
+ | Data type change       | Breaking     | Breaking     |
+ | Format change          | Breaking     | Breaking     |
+ | Integer narrows        | Breaking     | Evolutionary |
+ | Add new value to enum  | Evolutionary | Breaking     |
+ | Remove value from enum | Breaking     | Breaking     |
+ | Optional to required   | Breaking     | Breaking     |
+ | Required to optional   | Evolutionary | Breaking     |
+
+Microsoft's Azure API history is replete with anecdotes that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
+
+Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
+
+There are a few mechanisms that can reduce breaking changes and their effects on our customers.
+
 Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators. In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
 
 ### 12.3 Definition of a breaking change
@@ -1352,8 +1379,8 @@ Changes to the contract of an API are considered a breaking change.
 Changes that impact the backwards compatibility of an API are a breaking change.
 
 Teams MAY define backwards compatibility as their business needs require.
-For example, Azure defines the addition of a new JSON field in a response to be not backwards compatible.
-Office 365 has a looser definition of backwards compatibility and allows JSON fields to be added to responses.
+For example, Microsoft's Azure team defines the addition of a new JSON field in a response to be not backwards compatible.
+Microsoft's Office 365 has a looser definition of backwards compatibility and allows JSON fields to be added to responses.
 
 Clear examples of breaking changes:
 
@@ -1362,7 +1389,7 @@ Clear examples of breaking changes:
 3. Changes in Error Codes and Fault Contracts
 4. Anything that would violate the [Principle of Least Astonishment][principle-of-least-astonishment]
 
-See main section of 12.2 for breaking changes table.
+See main section of 12.2 for recommended breaking changes table.
 
 ## 13. Long running operations
 Long running operations, sometimes called async operations, tend to mean different things to different people.
